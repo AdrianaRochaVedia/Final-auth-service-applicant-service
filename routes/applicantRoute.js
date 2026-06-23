@@ -4,75 +4,68 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 const { validarRol } = require('../middlewares/validarRol');
 const {
-  registrarUsuario,
-  getUsuarios,
-  getUsuario,
-  actualizarUsuario,
-  eliminarUsuario
+  crearApplicant,
+  getApplicant,
+  actualizarApplicant,
+  subirDocumento,
+  getProfileStatus
 } = require('../controllers/applicantController');
 
 const router = Router();
 
-// Registrar usuario — solo admin
 router.post(
-  '/register',
-  [
-    validarJWT,
-    validarRol('admin'),
-    check('full_name', 'El nombre completo es obligatorio').not().isEmpty(),
-    check('email', 'El email debe ser válido').isEmail(),
-    check('password', 'La contraseña es obligatoria').notEmpty(),
-    check('role', 'El rol es obligatorio').not().isEmpty(),
-    validarCampos
-  ],
-  registrarUsuario
-);
-
-// Obtener todos los usuarios — admin y professor
-router.get(
   '/',
   [
     validarJWT,
-    validarRol('admin', 'professor')
+    validarRol('SOLICITANTE'),
+    check('document_type', 'El tipo de documento es obligatorio').notEmpty(),
+    check('document_type', 'Tipo de documento inválido').isIn(['CI', 'PASAPORTE', 'RUC']),
+    check('document_number', 'El número de documento es obligatorio').notEmpty(),
+    validarCampos
   ],
-  getUsuarios
+  crearApplicant
 );
 
-// Obtener usuario por id — admin y professor
 router.get(
   '/:id',
   [
     validarJWT,
-    validarRol('admin', 'professor'),
-    check('id', 'El id debe ser un UUID válido').isUUID(),
-    validarCampos
+    validarRol('SOLICITANTE', 'ANALISTA', 'REGULADOR')
   ],
-  getUsuario
+  getApplicant
 );
 
-// Actualizar usuario — admin puede actualizar cualquiera
 router.put(
   '/:id',
   [
     validarJWT,
-    check('id', 'El id debe ser un UUID válido').isUUID(),
-    check('full_name').optional().notEmpty().withMessage('El nombre no puede estar vacío'),
-    check('email').optional().isEmail().withMessage('El email debe ser válido'),
+    validarRol('SOLICITANTE'),
+    check('document_type').optional().isIn(['CI', 'PASAPORTE', 'RUC']).withMessage('Tipo de documento inválido'),
+    check('monthly_income').optional().isNumeric().withMessage('El ingreso mensual debe ser un número'),
+    check('employment_status').optional().isIn(['EMPLEADO', 'INDEPENDIENTE', 'DESEMPLEADO', 'ESTUDIANTE', 'JUBILADO']).withMessage('Estado de empleo inválido'),
     validarCampos
   ],
-  actualizarUsuario
+  actualizarApplicant
 );
 
-// Eliminar usuario  solo admin
-router.patch(
-  '/:id',
+router.post(
+  '/:id/identity-document',
   [
     validarJWT,
-    validarRol('admin'),
-    check('id', 'El id debe ser un UUID válido').isUUID(),
+    validarRol('SOLICITANTE'),
+    check('document_front_url', 'La URL del frente del documento es obligatoria').notEmpty(),
     validarCampos
   ],
-  eliminarUsuario
+  subirDocumento
+);
+
+router.get(
+  '/:id/profile-status',
+  [
+    validarJWT,
+    validarRol('SOLICITANTE', 'ANALISTA', 'REGULADOR')
+  ],
+  getProfileStatus
 );
 
 module.exports = router;

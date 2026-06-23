@@ -9,6 +9,7 @@ const {
   logout,
   revalidarToken
 } = require('../controllers/auth');
+const { passwordFuerte } = require('../helpers/validar-password');
 
 const router = Router();
 
@@ -17,7 +18,7 @@ router.post(
   [
     check('full_name', 'El nombre completo es obligatorio').notEmpty(),
     check('email', 'El email es obligatorio y debe ser válido').isEmail(),
-    check('password', 'La contraseña debe tener mínimo 8 caracteres').isLength({ min: 8 }),
+    check('password', 'Contraseña inválida').custom(passwordFuerte),
     check('role_name', 'El rol es obligatorio').notEmpty(),
     validarCampos
   ],

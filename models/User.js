@@ -1,14 +1,14 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../database/config');
 
-const UserApp = sequelize.define('UserApp', {
+const User = sequelize.define('User', {
   id: {
     type: DataTypes.UUID,
     primaryKey: true,
     defaultValue: DataTypes.UUIDV4
   },
   full_name: {
-    type: DataTypes.STRING(120),
+    type: DataTypes.STRING(150),
     allowNull: false
   },
   email: {
@@ -17,28 +17,37 @@ const UserApp = sequelize.define('UserApp', {
     unique: true
   },
   password_hash: {
-    type: DataTypes.STRING(255),
+    type: DataTypes.TEXT,
     allowNull: false
   },
-  role: {
+  phone: {
+    type: DataTypes.STRING(30),
+    allowNull: true
+  },
+  role_id: {
+    type: DataTypes.UUID,
+    allowNull: false
+  },
+  status: {
     type: DataTypes.STRING(30),
     allowNull: false,
+    defaultValue: 'ACTIVE',
     validate: {
-      isIn: [['student', 'professor', 'admin']]
+      isIn: [['ACTIVE', 'INACTIVE', 'SUSPENDED']]
     }
   },
   created_at: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW
   },
-  is_deleted: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
-    }
+  updated_at: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
+  }
 }, {
-  tableName: 'users_app',
+  tableName: 'users',
+  schema: 'auth',
   timestamps: false
 });
 
-module.exports = UserApp;
+module.exports = User;

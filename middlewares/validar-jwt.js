@@ -19,7 +19,7 @@ const validarJWT = (req, res = response, next) => {
     req.userRole = role;
 
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(401).json({
       ok: false,
       msg: 'Token no válido'

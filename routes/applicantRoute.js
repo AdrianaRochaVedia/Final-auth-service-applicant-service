@@ -9,7 +9,7 @@ const {
   getUsuario,
   actualizarUsuario,
   eliminarUsuario
-} = require('../controllers/userApp');
+} = require('../controllers/applicantController');
 
 const router = Router();
 

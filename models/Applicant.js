@@ -73,4 +73,8 @@ const Applicant = sequelize.define('Applicant', {
   timestamps: false
 });
 
+const IdentityDocument = require('./IdentityDocument');
+Applicant.hasMany(IdentityDocument, { foreignKey: 'applicant_id', as: 'documents' });
+IdentityDocument.belongsTo(Applicant, { foreignKey: 'applicant_id', as: 'applicant' });
+
 module.exports = Applicant;

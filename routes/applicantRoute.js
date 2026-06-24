@@ -17,7 +17,7 @@ const router = Router();
 router.post(
   '/',
   [
-    validarJWT,
+    //validarJWT,
     validarRol('SOLICITANTE'),
     check('document_type', 'El tipo de documento es obligatorio').notEmpty(),
     check('document_type', 'Tipo de documento inválido').isIn(['CI', 'PASAPORTE', 'RUC']),
@@ -25,6 +25,12 @@ router.post(
     validarCampos
   ],
   crearApplicant
+);
+
+router.get(
+  '/user/:userId',
+  [validarJWT],
+  getApplicantByUserId
 );
 
 router.get(
@@ -69,9 +75,5 @@ router.get(
   getProfileStatus
 );
 
-router.get(
-  '/user/:userId',
-  [validarJWT],
-  getApplicantByUserId
-);
+
 module.exports = router;

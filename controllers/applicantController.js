@@ -186,10 +186,36 @@ const getProfileStatus = async (req, res) => {
   }
 };
 
+const getApplicantByUserId = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const applicant = await Applicant.findOne({
+      where: { user_id: userId },
+      include: [{
+        model: IdentityDocument,
+        as: 'documents',
+        attributes: ['id', 'document_front_url', 'document_back_url', 'selfie_url', 'validation_status', 'uploaded_at']
+      }]
+    });
+
+    if (!applicant) {
+      return res.status(404).json({ ok: false, msg: 'Solicitante no encontrado' });
+    }
+
+    res.json({ ok: true, applicant });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ ok: false, msg: 'Error al obtener el solicitante' });
+  }
+};
+
 module.exports = {
   crearApplicant,
   getApplicant,
   actualizarApplicant,
   subirDocumento,
-  getProfileStatus
+  getProfileStatus,
+  getApplicantByUserId
 };

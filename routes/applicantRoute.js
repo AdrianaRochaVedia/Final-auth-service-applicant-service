@@ -8,7 +8,8 @@ const {
   getApplicant,
   actualizarApplicant,
   subirDocumento,
-  getProfileStatus
+  getProfileStatus,
+  getApplicantByUserId
 } = require('../controllers/applicantController');
 
 const router = Router();
@@ -68,4 +69,9 @@ router.get(
   getProfileStatus
 );
 
+router.get(
+  '/user/:userId',
+  [validarJWT],
+  getApplicantByUserId
+);
 module.exports = router;
